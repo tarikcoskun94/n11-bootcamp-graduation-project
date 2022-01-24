@@ -47,6 +47,7 @@ public class LoanApplication extends BaseEntity implements Serializable {
 
     /**
      * Start of possible other contents
+     * Transient fields, PostLoad, PrePersist, etc
      */
 
     @Transient

@@ -3,9 +3,7 @@ package com.n11.graduationproject.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -41,4 +39,8 @@ public class Customer extends BaseEntity implements Serializable {
             unique = true,
             nullable = false)
     private String phoneNumber;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "customer", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private LoanCustomer loanCustomer;
 }

@@ -52,6 +52,7 @@ public class LoanCustomer implements Serializable {
 
     /**
      * Start of possible other contents
+     * Transient fields, PostLoad, PrePersist, etc
      */
 
     @Transient
