@@ -1,7 +1,7 @@
 package com.n11.graduationproject.exception;
 
-import com.n11.graduationproject.dto.ExceptionDTO;
-import com.n11.graduationproject.exception.base.BasicMessageResponseException;
+import com.n11.graduationproject.dto.ErrorMessage;
+import com.n11.graduationproject.dto.exception.ExceptionDTO;
 import com.n11.graduationproject.exception.customer.CustomerAlreadyExistingException;
 import com.n11.graduationproject.exception.customer.CustomerNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -19,24 +19,20 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
      * START: HttpStatus.NOT_FOUND Exceptions
      */
     @ExceptionHandler(value = {CustomerNotFoundException.class})
-    public ResponseEntity<?> handleUserNotFoundException(CustomerNotFoundException customerNotFoundException) {
+    public ResponseEntity<?> handleCustomerNotFoundException(CustomerNotFoundException customerNotFoundException) {
 
-        ExceptionDTO exceptionDTO = ExceptionDTO.builder()
-                .errorTitle(customerNotFoundException.getErrorTitle())
-                .errorMessages(customerNotFoundException.getErrorMessages())
-                .httpStatus(HttpStatus.NOT_FOUND)
-                .timeStamp(LocalDateTime.now())
-                .build();
+        HttpStatus httpStatus = HttpStatus.NOT_FOUND;
 
-        return new ResponseEntity<>(exceptionDTO, HttpStatus.NOT_FOUND);
-    }
+        ErrorMessage errorMessage = new ErrorMessage();
+        errorMessage.setHttpStatus(httpStatus);
+        errorMessage.setTimeStamp(LocalDateTime.now());
+        errorMessage.setMessages(customerNotFoundException.getMessages());
 
-    @ExceptionHandler(value = {BasicMessageResponseException.class})
-    public ResponseEntity<?> handleRequestException(BasicMessageResponseException basicMessageResponseException) {
+        ExceptionDTO exceptionDTO = new ExceptionDTO();
+        exceptionDTO.setExceptionPath(customerNotFoundException.toString());
+        errorMessage.setContent(exceptionDTO);
 
-        String responseMessage = basicMessageResponseException.getMessage();
-
-        return new ResponseEntity<>(responseMessage, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorMessage, httpStatus);
     }
     /** END: HttpStatus.NOT_FOUND Exceptions */
 
@@ -44,16 +40,20 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
      * START: HttpStatus.BAD_REQUEST Exceptions
      */
     @ExceptionHandler(value = {CustomerAlreadyExistingException.class})
-    public ResponseEntity<?> handleUserExistingFieldException(CustomerAlreadyExistingException userExistingFieldException) {
+    public ResponseEntity<?> handleCustomerAlreadyExistingException(CustomerAlreadyExistingException customerAlreadyExistingException) {
 
-        ExceptionDTO exceptionDTO = ExceptionDTO.builder()
-                .errorTitle(userExistingFieldException.getErrorTitle())
-                .errorMessages(userExistingFieldException.getErrorMessages())
-                .httpStatus(HttpStatus.BAD_REQUEST)
-                .timeStamp(LocalDateTime.now())
-                .build();
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 
-        return new ResponseEntity<>(exceptionDTO, HttpStatus.BAD_REQUEST);
+        ErrorMessage errorMessage = new ErrorMessage();
+        errorMessage.setHttpStatus(httpStatus);
+        errorMessage.setTimeStamp(LocalDateTime.now());
+        errorMessage.setMessages(customerAlreadyExistingException.getMessages());
+
+        ExceptionDTO exceptionDTO = new ExceptionDTO();
+        exceptionDTO.setExceptionPath(customerAlreadyExistingException.toString());
+        errorMessage.setContent(exceptionDTO);
+
+        return new ResponseEntity<>(errorMessage, httpStatus);
     }
     /** END: HttpStatus.BAD_REQUEST Exceptions */
 }

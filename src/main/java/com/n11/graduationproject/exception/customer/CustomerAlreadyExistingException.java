@@ -1,19 +1,22 @@
 package com.n11.graduationproject.exception.customer;
 
-import com.n11.graduationproject.exception.base.EntityAlreadyExistingException;
+import com.n11.graduationproject.exception.BaseException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
-public class CustomerAlreadyExistingException extends EntityAlreadyExistingException {
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class CustomerAlreadyExistingException extends BaseException {
 
     public CustomerAlreadyExistingException() {
     }
 
-    public CustomerAlreadyExistingException(String... errorMessages) {
-        super(errorMessages);
+    public CustomerAlreadyExistingException(String... messages) {
+        super(messages);
     }
 
-    public CustomerAlreadyExistingException(List<String> errorMessages) {
-        super(errorMessages);
+    public CustomerAlreadyExistingException(List<String> messages) {
+        super(messages);
     }
 }
