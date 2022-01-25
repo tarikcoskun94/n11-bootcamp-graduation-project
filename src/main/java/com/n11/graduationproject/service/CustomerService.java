@@ -11,7 +11,6 @@ import com.n11.graduationproject.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,17 @@ import java.util.List;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final EntityManager entityManager;
+
+    @Transactional
+    public CustomerResponseDTO findById(Long id) {
+
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer is not found by ID: " + id));
+
+        CustomerResponseDTO customerResponseDTO = CustomerConverter.convertToCustomerResponseDTO(customer);
+
+        return customerResponseDTO;
+    }
 
     @Transactional
     public CustomerResponseDTO save(CustomerSaveRequestDTO customerSaveRequestDTO) {
@@ -66,16 +75,13 @@ public class CustomerService {
         return customerResponseDTO;
     }
 
-    //TODO: Success ve error'lar için hata tipleri düzenle-> ExceptionDTO yerine daha iyi bir yapı gelsin.
     @Transactional
-    public String deleteById(Long id) {
+    public CustomerResponseDTO deleteById(Long id) {
 
-        if (!customerRepository.existsById(id)) {
-            throw new CustomerNotFoundException("Customer is not found by ID: " + id);
-        }
+        CustomerResponseDTO customerResponseDTO = this.findById(id);
 
         customerRepository.deleteById(id);
 
-        return "Customer has been deleted by ID: " + id;
+        return customerResponseDTO;
     }
 }

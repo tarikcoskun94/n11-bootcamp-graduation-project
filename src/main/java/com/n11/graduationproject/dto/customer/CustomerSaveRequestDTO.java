@@ -1,6 +1,7 @@
 package com.n11.graduationproject.dto.customer;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.n11.graduationproject.dto.Responsable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class CustomerSaveRequestDTO {
+public class CustomerSaveRequestDTO implements Responsable {
 
     /**
      * Customer fields

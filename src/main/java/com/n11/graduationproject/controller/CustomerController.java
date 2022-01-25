@@ -1,5 +1,6 @@
 package com.n11.graduationproject.controller;
 
+import com.n11.graduationproject.dto.SuccessMessage;
 import com.n11.graduationproject.dto.customer.CustomerResponseDTO;
 import com.n11.graduationproject.dto.customer.CustomerSaveRequestDTO;
 import com.n11.graduationproject.dto.customer.CustomerUpdateRequestDTO;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @RestController
@@ -19,26 +21,50 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<CustomerResponseDTO> save(@Valid @RequestBody CustomerSaveRequestDTO customerSaveRequestDTO) {
+    public ResponseEntity<SuccessMessage> save(@Valid @RequestBody CustomerSaveRequestDTO customerSaveRequestDTO) {
 
         CustomerResponseDTO customerResponseDTO = customerService.save(customerSaveRequestDTO);
 
-        return new ResponseEntity<>(customerResponseDTO, HttpStatus.CREATED);
+        HttpStatus httpStatus = HttpStatus.CREATED;
+
+        SuccessMessage successMessage = new SuccessMessage();
+        successMessage.setHttpStatus(httpStatus);
+        successMessage.setTimeStamp(LocalDateTime.now());
+        successMessage.addMessage("Customer has been created.");
+        successMessage.addContent(customerResponseDTO);
+
+        return new ResponseEntity<>(successMessage, httpStatus);
     }
 
     @PutMapping
-    public ResponseEntity<CustomerResponseDTO> update(@Valid @RequestBody CustomerUpdateRequestDTO customerUpdateRequestDTO) {
+    public ResponseEntity<SuccessMessage> update(@Valid @RequestBody CustomerUpdateRequestDTO customerUpdateRequestDTO) {
 
         CustomerResponseDTO customerResponseDTO = customerService.update(customerUpdateRequestDTO);
 
-        return new ResponseEntity<>(customerResponseDTO, HttpStatus.OK);
+        HttpStatus httpStatus = HttpStatus.OK;
+
+        SuccessMessage successMessage = new SuccessMessage();
+        successMessage.setHttpStatus(httpStatus);
+        successMessage.setTimeStamp(LocalDateTime.now());
+        successMessage.addMessage("Customer has been updated.");
+        successMessage.addContent(customerResponseDTO);
+
+        return new ResponseEntity<>(successMessage, httpStatus);
     }
 
     @DeleteMapping(value = "/id/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable Long id) {
+    public ResponseEntity<SuccessMessage> deleteById(@PathVariable Long id) {
 
-        String deleteMessage = customerService.deleteById(id);
+        CustomerResponseDTO customerResponseDTO = customerService.deleteById(id);
 
-        return new ResponseEntity<>(deleteMessage, HttpStatus.OK);
+        HttpStatus httpStatus = HttpStatus.OK;
+
+        SuccessMessage successMessage = new SuccessMessage();
+        successMessage.setHttpStatus(httpStatus);
+        successMessage.setTimeStamp(LocalDateTime.now());
+        successMessage.addMessage("Customer has been deleted");
+        successMessage.addContent(customerResponseDTO);
+
+        return new ResponseEntity<>(successMessage, httpStatus);
     }
 }
