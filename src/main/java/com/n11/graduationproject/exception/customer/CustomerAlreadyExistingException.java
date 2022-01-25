@@ -12,8 +12,8 @@ public class CustomerAlreadyExistingException extends BaseException {
     public CustomerAlreadyExistingException() {
     }
 
-    public CustomerAlreadyExistingException(String... messages) {
-        super(messages);
+    public CustomerAlreadyExistingException(String message) {
+        super(message);
     }
 
     public CustomerAlreadyExistingException(List<String> messages) {

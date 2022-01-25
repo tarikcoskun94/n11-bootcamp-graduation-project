@@ -30,7 +30,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
         ExceptionDTO exceptionDTO = new ExceptionDTO();
         exceptionDTO.setExceptionPath(customerNotFoundException.toString());
-        errorMessage.setContent(exceptionDTO);
+        errorMessage.addContent(exceptionDTO);
 
         return new ResponseEntity<>(errorMessage, httpStatus);
     }
@@ -51,7 +51,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
         ExceptionDTO exceptionDTO = new ExceptionDTO();
         exceptionDTO.setExceptionPath(customerAlreadyExistingException.toString());
-        errorMessage.setContent(exceptionDTO);
+        errorMessage.addContent(exceptionDTO);
 
         return new ResponseEntity<>(errorMessage, httpStatus);
     }

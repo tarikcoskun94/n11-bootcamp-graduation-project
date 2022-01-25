@@ -12,8 +12,8 @@ public class CustomerNotFoundException extends BaseException {
     public CustomerNotFoundException() {
     }
 
-    public CustomerNotFoundException(String... messages) {
-        super(messages);
+    public CustomerNotFoundException(String message) {
+        super(message);
     }
 
     public CustomerNotFoundException(List<String> messages) {

@@ -2,11 +2,10 @@ package com.n11.graduationproject.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.n11.graduationproject.enum_.ReponseMessageType;
-import lombok.*;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseMessage {
@@ -17,6 +16,11 @@ public abstract class BaseMessage {
     private LocalDateTime timeStamp;
     private List<String> messages;
     private List<Responsable> content;
+
+    public BaseMessage() {
+        this.messages = new ArrayList<>();
+        this.content = new ArrayList<>();
+    }
 
     public ReponseMessageType getType() {
         return type;
@@ -47,11 +51,12 @@ public abstract class BaseMessage {
     }
 
     public void setMessages(List<String> messages) {
+        this.messages.clear();
         this.messages = messages;
     }
 
-    public void setMessages(String... messages) {
-        this.messages = Arrays.asList(messages);
+    public void addMessage(String message) {
+        this.messages.add(message);
     }
 
     public List<Responsable> getContent() {
@@ -59,10 +64,11 @@ public abstract class BaseMessage {
     }
 
     public void setContent(List<Responsable> content) {
+        this.content.clear();
         this.content = content;
     }
 
-    public void setContent(Responsable... content) {
-        this.content = Arrays.asList(content);
+    public void addContent(Responsable content) {
+        this.content.add(content);
     }
 }
