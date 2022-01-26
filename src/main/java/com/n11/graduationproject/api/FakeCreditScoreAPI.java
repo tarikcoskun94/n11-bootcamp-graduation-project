@@ -2,9 +2,11 @@ package com.n11.graduationproject.api;
 
 import com.n11.graduationproject.entity.CreditScore;
 import com.n11.graduationproject.repository.CreditScoreRepository;
+import com.n11.graduationproject.util.NumberUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -18,9 +20,17 @@ public class FakeCreditScoreAPI {
         return creditScoreRepository.getScoreByTCIdentificationNo(TCKN);
     }
 
-    public CreditScore save(CreditScore creditScore) {
+    public void save(String TCKN) {
 
-        // TODO: Aynı TCKN kayıtları için already exist kontrolleri burada da gerekebilir. Sonradan bir göz at.
-        return creditScoreRepository.save(creditScore);
+        if (!creditScoreRepository.existsByTCIdentificationNo(TCKN)) {
+
+            CreditScore creditScore = new CreditScore();
+            creditScore.setCreationTime(LocalDateTime.now());
+            creditScore.setUpdateTime(LocalDateTime.now());
+            creditScore.setScore(NumberUtil.generateRandomNumberBetween(1, 1900));
+            creditScore.setTCIdentificationNo(TCKN);
+
+            creditScoreRepository.save(creditScore);
+        }
     }
 }
