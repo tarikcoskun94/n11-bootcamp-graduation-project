@@ -1,17 +1,21 @@
 package com.n11.graduationproject.service;
 
+import com.n11.graduationproject.api.FakeCreditScoreAPI;
 import com.n11.graduationproject.converter.CustomerConverter;
 import com.n11.graduationproject.dto.customer.CustomerResponseDTO;
 import com.n11.graduationproject.dto.customer.CustomerSaveRequestDTO;
 import com.n11.graduationproject.dto.customer.CustomerUpdateRequestDTO;
+import com.n11.graduationproject.entity.CreditScore;
 import com.n11.graduationproject.entity.Customer;
 import com.n11.graduationproject.exception.customer.CustomerAlreadyExistingException;
 import com.n11.graduationproject.exception.customer.CustomerNotFoundException;
 import com.n11.graduationproject.repository.CustomerRepository;
+import com.n11.graduationproject.util.NumberUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +24,7 @@ import java.util.List;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final FakeCreditScoreAPI fakeCreditScoreAPI;
 
     @Transactional
     public CustomerResponseDTO findById(Long id) {
@@ -30,6 +35,15 @@ public class CustomerService {
         CustomerResponseDTO customerResponseDTO = CustomerConverter.convertToCustomerResponseDTO(customer);
 
         return customerResponseDTO;
+    }
+
+    @Transactional
+    public Customer findByIdAsEntity(Long id) {
+
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer is not found by ID: " + id));
+
+        return customer;
     }
 
     @Transactional
@@ -49,6 +63,8 @@ public class CustomerService {
         if (!errorMessages.isEmpty()) {
             throw new CustomerAlreadyExistingException(errorMessages);
         }
+
+        fakeCreditScoreAPI.save(customerSaveRequestDTO.getTCIdentificationNo());
 
         Customer customer = CustomerConverter.convertToCustomer(customerSaveRequestDTO);
         Customer savedCustomer = customerRepository.save(customer);

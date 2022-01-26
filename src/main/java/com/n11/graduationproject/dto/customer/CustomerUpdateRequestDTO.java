@@ -1,7 +1,6 @@
 package com.n11.graduationproject.dto.customer;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.n11.graduationproject.dto.Responsable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +12,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class CustomerUpdateRequestDTO implements Responsable {
+public class CustomerUpdateRequestDTO {
 
     /**
      * Base fields
@@ -41,21 +40,4 @@ public class CustomerUpdateRequestDTO implements Responsable {
     @NotBlank(message = "Phone number is mandatory.")
     @Pattern(regexp = "^\\d+$", message = "Phone number must include only numbers.")
     private String phoneNumber;
-
-    /**
-     * LoanCustomer fields
-     */
-    //TODO: Yoruma alınmış satırlar mevcut.
-//    @Digits(integer = 10, fraction = 2)
-//    @NotBlank(message = "Salary is mandatory.")
-//    @DecimalMin(value = "1.00")
-//    private BigDecimal salary;
-//
-//    @Digits(integer = 10, fraction = 2)
-//    private BigDecimal additionalIncome;
-//
-//    @Size(min = 13, max = 13, message = "Social security no must be exact 13 character.")
-//    @NotBlank(message = "Social security no is mandatory.")
-//    @Pattern(regexp = "^\\d+$", message = "Social security no must include only numbers.")
-//    private String socialSecurityNo;
 }
