@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -17,8 +18,6 @@ public class CustomerUpdateRequestDTO {
     /**
      * Base fields
      */
-    //@NotBlank(message = "Id no is mandatory.")
-    //@Pattern(regexp = "^\\d+$", message = "Id must be number.")
     private Long id;
 
     /**
@@ -40,4 +39,7 @@ public class CustomerUpdateRequestDTO {
     @NotBlank(message = "Phone number is mandatory.")
     @Pattern(regexp = "^\\d+$", message = "Phone number must include only numbers.")
     private String phoneNumber;
+
+    @Valid
+    private LoanCustomerSaveUpdateRequestDTO loanCustomer;
 }

@@ -5,17 +5,17 @@ import com.n11.graduationproject.converter.CustomerConverter;
 import com.n11.graduationproject.dto.customer.CustomerResponseDTO;
 import com.n11.graduationproject.dto.customer.CustomerSaveRequestDTO;
 import com.n11.graduationproject.dto.customer.CustomerUpdateRequestDTO;
-import com.n11.graduationproject.entity.CreditScore;
 import com.n11.graduationproject.entity.Customer;
+import com.n11.graduationproject.entity.LoanCustomer;
 import com.n11.graduationproject.exception.customer.CustomerAlreadyExistingException;
 import com.n11.graduationproject.exception.customer.CustomerNotFoundException;
+import com.n11.graduationproject.exception.customer.LoanCustomerAlreadyExistingException;
 import com.n11.graduationproject.repository.CustomerRepository;
-import com.n11.graduationproject.util.NumberUtil;
+import com.n11.graduationproject.repository.LoanCustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +24,7 @@ import java.util.List;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final LoanCustomerRepository loanCustomerRepository;
     private final FakeCreditScoreAPI fakeCreditScoreAPI;
 
     @Transactional
@@ -32,18 +33,14 @@ public class CustomerService {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer is not found by ID: " + id));
 
-        CustomerResponseDTO customerResponseDTO = CustomerConverter.convertToCustomerResponseDTO(customer);
-
-        return customerResponseDTO;
+        return CustomerConverter.convertToCustomerResponseDTO(customer);
     }
 
     @Transactional
     public Customer findByIdAsEntity(Long id) {
 
-        Customer customer = customerRepository.findById(id)
+        return customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer is not found by ID: " + id));
-
-        return customer;
     }
 
     @Transactional
@@ -67,10 +64,27 @@ public class CustomerService {
         fakeCreditScoreAPI.save(customerSaveRequestDTO.getTCIdentificationNo());
 
         Customer customer = CustomerConverter.convertToCustomer(customerSaveRequestDTO);
-        Customer savedCustomer = customerRepository.save(customer);
-        CustomerResponseDTO customerResponseDTO = CustomerConverter.convertToCustomerResponseDTO(savedCustomer);
+        Customer savedCustomer = customerRepository.saveAndFlush(customer);
 
-        return customerResponseDTO;
+        LoanCustomer loanCustomer = CustomerConverter.convertToLoanCustomer(customerSaveRequestDTO, savedCustomer);
+        if (loanCustomer != null) {
+            this.saveLoanCustomer(loanCustomer);
+        }
+        customerRepository.refresh(savedCustomer);
+
+        return CustomerConverter.convertToCustomerResponseDTO(savedCustomer);
+    }
+
+    private LoanCustomer saveLoanCustomer(LoanCustomer loanCustomer) {
+
+        String socialSecurityNo = loanCustomer.getSocialSecurityNo();
+        Long customerId = loanCustomer.getCustomer().getId();
+
+        if (loanCustomerRepository.existsBySocialSecurityNoAndIdNot(socialSecurityNo, customerId)) {
+            throw new LoanCustomerAlreadyExistingException("Social security no is already exist: " + socialSecurityNo);
+        }
+
+        return loanCustomerRepository.saveAndFlush(loanCustomer);
     }
 
     @Transactional
@@ -85,10 +99,14 @@ public class CustomerService {
 
         Customer customer = CustomerConverter.convertToCustomer(customerUpdateRequestDTO);
         Customer updatedCustomer = customerRepository.saveAndFlush(customer);
-        customerRepository.refresh(updatedCustomer);
-        CustomerResponseDTO customerResponseDTO = CustomerConverter.convertToCustomerResponseDTO(updatedCustomer);
 
-        return customerResponseDTO;
+        LoanCustomer loanCustomer = CustomerConverter.convertToLoanCustomer(customerUpdateRequestDTO, updatedCustomer, loanCustomerRepository);
+        if (loanCustomer != null) {
+            this.saveLoanCustomer(loanCustomer);
+        }
+        customerRepository.refresh(updatedCustomer);
+
+        return CustomerConverter.convertToCustomerResponseDTO(updatedCustomer);
     }
 
     @Transactional

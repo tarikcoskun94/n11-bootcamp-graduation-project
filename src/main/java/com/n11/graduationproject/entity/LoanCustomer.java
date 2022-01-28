@@ -1,7 +1,6 @@
 package com.n11.graduationproject.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,12 +9,15 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "loan_customers")
 public class LoanCustomer implements Serializable {
 
     @Id
-    @Column(name = "customer_id",
+    @Column(name = "id",
             unique = true,
             nullable = false,
             insertable = false,
@@ -37,7 +39,8 @@ public class LoanCustomer implements Serializable {
     private BigDecimal salary;
 
     @Column(name = "additional_income",
-            scale = 2)
+            scale = 2,
+            nullable = false)
     private BigDecimal additionalIncome;
 
     @Column(name = "social_security_no",
@@ -54,7 +57,29 @@ public class LoanCustomer implements Serializable {
      * Start of possible other contents
      * Transient fields, PostLoad, PrePersist, etc
      */
-
     @Transient
     private BigDecimal totalIncome;
+
+    @PostLoad
+    private void runOnLoad() {
+
+        this.calculateTotalIncome();
+    }
+
+    @PrePersist
+    private void runOnPersist() {
+
+        this.calculateTotalIncome();
+    }
+
+    @PreUpdate
+    private void runOnUpdate() {
+
+        this.calculateTotalIncome();
+    }
+
+    private void calculateTotalIncome() {
+
+        this.totalIncome = this.salary.add(this.additionalIncome);
+    }
 }

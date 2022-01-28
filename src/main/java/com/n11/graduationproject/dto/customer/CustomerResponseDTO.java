@@ -34,11 +34,5 @@ public class CustomerResponseDTO implements Responsable {
     private LocalDate birthDate;
     private String phoneNumber;
 
-    /**
-     * LoanCustomer fields
-     */
-    private BigDecimal salary;
-    private BigDecimal additionalIncome;
-    private String socialSecurityNo;
-    private BigDecimal totalIncome;
+    private LoanCustomerResponseDTO loanCustomer;
 }

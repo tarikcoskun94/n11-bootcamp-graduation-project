@@ -4,6 +4,7 @@ import com.n11.graduationproject.dto.ErrorMessage;
 import com.n11.graduationproject.dto.exception.ExceptionDTO;
 import com.n11.graduationproject.exception.customer.CustomerAlreadyExistingException;
 import com.n11.graduationproject.exception.customer.CustomerNotFoundException;
+import com.n11.graduationproject.exception.customer.LoanCustomerAlreadyExistingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -51,6 +52,23 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
         ExceptionDTO exceptionDTO = new ExceptionDTO();
         exceptionDTO.setExceptionPath(customerAlreadyExistingException.toString());
+        errorMessage.addContent(exceptionDTO);
+
+        return new ResponseEntity<>(errorMessage, httpStatus);
+    }
+
+    @ExceptionHandler(value = {LoanCustomerAlreadyExistingException.class})
+    public ResponseEntity<?> handleLoanCustomerAlreadyExistingException(LoanCustomerAlreadyExistingException loanCustomerAlreadyExistingException) {
+
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+
+        ErrorMessage errorMessage = new ErrorMessage();
+        errorMessage.setHttpStatus(httpStatus);
+        errorMessage.setTimeStamp(LocalDateTime.now());
+        errorMessage.setMessages(loanCustomerAlreadyExistingException.getMessages());
+
+        ExceptionDTO exceptionDTO = new ExceptionDTO();
+        exceptionDTO.setExceptionPath(loanCustomerAlreadyExistingException.toString());
         errorMessage.addContent(exceptionDTO);
 
         return new ResponseEntity<>(errorMessage, httpStatus);

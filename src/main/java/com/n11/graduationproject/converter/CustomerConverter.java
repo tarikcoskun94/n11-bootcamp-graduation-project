@@ -1,10 +1,9 @@
 package com.n11.graduationproject.converter;
 
-import com.n11.graduationproject.dto.customer.CustomerResponseDTO;
-import com.n11.graduationproject.dto.customer.CustomerSaveRequestDTO;
-import com.n11.graduationproject.dto.customer.CustomerUpdateRequestDTO;
+import com.n11.graduationproject.dto.customer.*;
 import com.n11.graduationproject.entity.Customer;
 import com.n11.graduationproject.entity.LoanCustomer;
+import com.n11.graduationproject.repository.LoanCustomerRepository;
 
 import java.time.LocalDateTime;
 
@@ -25,6 +24,25 @@ public final class CustomerConverter {
         return customer;
     }
 
+    public static LoanCustomer convertToLoanCustomer(CustomerSaveRequestDTO customerSaveRequestDTO,
+                                                     Customer customer) {
+
+        LoanCustomer loanCustomer = null;
+
+        LoanCustomerSaveUpdateRequestDTO loanCustomerSaveUpdateRequestDTO = customerSaveRequestDTO.getLoanCustomer();
+
+        if (loanCustomerSaveUpdateRequestDTO != null) {
+            loanCustomer = LoanCustomer.builder()
+                    .customer(customer)
+                    .salary(loanCustomerSaveUpdateRequestDTO.getSalary())
+                    .additionalIncome(loanCustomerSaveUpdateRequestDTO.getAdditionalIncome())
+                    .socialSecurityNo(loanCustomerSaveUpdateRequestDTO.getSocialSecurityNo())
+                    .build();
+        }
+
+        return loanCustomer;
+    }
+
     public static Customer convertToCustomer(CustomerUpdateRequestDTO customerUpdateRequestDTO) {
         Customer customer = Customer.builder()
                 .firstName(customerUpdateRequestDTO.getFirstName())
@@ -39,7 +57,44 @@ public final class CustomerConverter {
         return customer;
     }
 
+    public static LoanCustomer convertToLoanCustomer(CustomerUpdateRequestDTO customerUpdateRequestDTO,
+                                                     Customer customer,
+                                                     LoanCustomerRepository loanCustomerRepository) {
+
+        LoanCustomer loanCustomer = null;
+
+        LoanCustomerSaveUpdateRequestDTO loanCustomerSaveUpdateRequestDTO = customerUpdateRequestDTO.getLoanCustomer();
+
+        if (loanCustomerSaveUpdateRequestDTO != null) {
+            loanCustomer = LoanCustomer.builder()
+                    .customer(customer)
+                    .salary(loanCustomerSaveUpdateRequestDTO.getSalary())
+                    .additionalIncome(loanCustomerSaveUpdateRequestDTO.getAdditionalIncome())
+                    .socialSecurityNo(loanCustomerSaveUpdateRequestDTO.getSocialSecurityNo())
+                    .build();
+
+            if (loanCustomerRepository.existsById(customer.getId())) {
+                loanCustomer.setId(customer.getId());
+            }
+        }
+
+        return loanCustomer;
+    }
+
     public static CustomerResponseDTO convertToCustomerResponseDTO(Customer customer) {
+
+        LoanCustomerResponseDTO loanCustomerResponseDTO = null;
+
+        LoanCustomer loanCustomer = customer.getLoanCustomer();
+
+        if (loanCustomer != null) {
+            loanCustomerResponseDTO = LoanCustomerResponseDTO.builder()
+                    .salary(loanCustomer.getSalary())
+                    .additionalIncome(loanCustomer.getAdditionalIncome())
+                    .socialSecurityNo(loanCustomer.getSocialSecurityNo())
+                    .totalIncome(loanCustomer.getTotalIncome())
+                    .build();
+        }
 
         CustomerResponseDTO customerResponseDTO = CustomerResponseDTO.builder()
                 .id(customer.getId())
@@ -50,16 +105,8 @@ public final class CustomerConverter {
                 .TCIdentificationNo(customer.getTCIdentificationNo())
                 .birthDate(customer.getBirthDate())
                 .phoneNumber(customer.getPhoneNumber())
+                .loanCustomer(loanCustomerResponseDTO)
                 .build();
-
-        if (customer.getLoanCustomer() != null) {
-            LoanCustomer loanCustomer = customer.getLoanCustomer();
-
-            customerResponseDTO.setSalary(loanCustomer.getSalary());
-            customerResponseDTO.setAdditionalIncome(loanCustomer.getAdditionalIncome());
-            customerResponseDTO.setSocialSecurityNo(loanCustomer.getSocialSecurityNo());
-            customerResponseDTO.setTotalIncome(loanCustomer.getTotalIncome());
-        }
 
         return customerResponseDTO;
     }
