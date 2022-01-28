@@ -54,4 +54,18 @@ public class LoanApplication extends BaseEntity implements Serializable {
 
     @Transient
     private BigDecimal totalCollateralPrice;
+
+    @PostLoad
+    private void runOnLoad() {
+
+        this.calculateTotalCollateralPrice();
+    }
+
+    private void calculateTotalCollateralPrice() {
+
+        this.totalCollateralPrice = new BigDecimal("0.00");
+        for (Collateral collateral : this.collateralList) {
+            this.totalCollateralPrice = this.totalCollateralPrice.add(collateral.getPrice());
+        }
+    }
 }

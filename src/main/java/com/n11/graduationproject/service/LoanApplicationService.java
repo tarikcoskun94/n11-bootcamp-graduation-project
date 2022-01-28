@@ -4,8 +4,10 @@ import com.n11.graduationproject.api.FakeCreditScoreAPI;
 import com.n11.graduationproject.converter.LoanApplicationConverter;
 import com.n11.graduationproject.dto.collateral.CollateralSaveRequestDTO;
 import com.n11.graduationproject.dto.loanapplication.LoanApplicationQueryRequestDTO;
+import com.n11.graduationproject.dto.loanapplication.LoanApplicationResponseDTO;
 import com.n11.graduationproject.dto.loanapplication.LoanApplicationResultDTO;
 import com.n11.graduationproject.dto.loanapplication.LoanApplicationSaveRequestDTO;
+import com.n11.graduationproject.entity.Collateral;
 import com.n11.graduationproject.entity.LoanApplication;
 import com.n11.graduationproject.entity.LoanCustomer;
 import com.n11.graduationproject.enum_.CreditLimitFactor;
@@ -32,10 +34,11 @@ public class LoanApplicationService {
 
     private final LoanApplicationRepository loanApplicationRepository;
     private final CustomerService customerService;
+    private final CollateralService collateralService;
     private final FakeCreditScoreAPI fakeCreditScoreAPI;
 
     @Transactional
-    public LoanApplicationResultDTO save(LoanApplicationSaveRequestDTO loanApplicationSaveRequestDTO) {
+    public LoanApplicationResponseDTO save(LoanApplicationSaveRequestDTO loanApplicationSaveRequestDTO) {
 
         /** START: Collecting required info. */
         Long customerId = loanApplicationSaveRequestDTO.getCustomerId(); //Required
@@ -66,16 +69,20 @@ public class LoanApplicationService {
         }
         /** END: Checking the application request. */
 
+        /** START: Persisting the application request. */
         LoanApplication loanApplication = LoanApplicationConverter
                 .convertToLoanApplication(customerId, creditScore, totalIncome, loanApplicationResultDTO);
 
-        LoanApplication savedLoanApplication = loanApplicationRepository.save(loanApplication);
+        LoanApplication savedLoanApplication = loanApplicationRepository.saveAndFlush(loanApplication);
+        List<Collateral> savedCollateralList = collateralService.saveAll(collateralList, savedLoanApplication);
+        savedLoanApplication.setCollateralList(savedCollateralList);
+        /** END: Persisting the application request. */
 
-        return loanApplicationResultDTO;
+        return LoanApplicationConverter.convertToLoanApplicationResponseDTO(savedLoanApplication);
     }
 
     @Transactional
-    public LoanApplicationResultDTO queryLoanApplication(LoanApplicationQueryRequestDTO loanApplicationQueryRequestDTO) {
+    public LoanApplicationResponseDTO queryLoanApplication(LoanApplicationQueryRequestDTO loanApplicationQueryRequestDTO) {
 
         String tcIdentificationNo = loanApplicationQueryRequestDTO.getTCIdentificationNo();
         LocalDate birthDate = loanApplicationQueryRequestDTO.getBirthDate();
@@ -86,10 +93,7 @@ public class LoanApplicationService {
                 .orElseThrow(() -> new LoanApplicationNotFoundException("Loan application is not found by ID and TC identification no: "
                         + tcIdentificationNo + " | " + birthDate));
 
-        return LoanApplicationResultDTO.builder()
-                .limit(loanApplication.getLimit())
-                .status(loanApplication.getStatus())
-                .build();
+        return LoanApplicationConverter.convertToLoanApplicationResponseDTO(loanApplication);
     }
 
 

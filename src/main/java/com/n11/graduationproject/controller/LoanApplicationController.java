@@ -2,6 +2,7 @@ package com.n11.graduationproject.controller;
 
 import com.n11.graduationproject.dto.SuccessMessage;
 import com.n11.graduationproject.dto.loanapplication.LoanApplicationQueryRequestDTO;
+import com.n11.graduationproject.dto.loanapplication.LoanApplicationResponseDTO;
 import com.n11.graduationproject.dto.loanapplication.LoanApplicationResultDTO;
 import com.n11.graduationproject.dto.loanapplication.LoanApplicationSaveRequestDTO;
 import com.n11.graduationproject.service.LoanApplicationService;
@@ -26,7 +27,8 @@ public class LoanApplicationController {
     @PostMapping
     public ResponseEntity<SuccessMessage> save(@Valid @RequestBody LoanApplicationSaveRequestDTO loanApplicationSaveRequestDTO) {
 
-        LoanApplicationResultDTO loanApplicationResultDTO = loanApplicationService.save(loanApplicationSaveRequestDTO);
+        LoanApplicationResponseDTO loanApplicationResponseDTO
+                = loanApplicationService.save(loanApplicationSaveRequestDTO);
 
         HttpStatus httpStatus = HttpStatus.CREATED;
 
@@ -34,7 +36,7 @@ public class LoanApplicationController {
         successMessage.setHttpStatus(httpStatus);
         successMessage.setTimeStamp(LocalDateTime.now());
         successMessage.addMessage("Loan application has been created.");
-        successMessage.addContent(loanApplicationResultDTO);
+        successMessage.addContent(loanApplicationResponseDTO);
 
         return new ResponseEntity<>(successMessage, httpStatus);
     }
@@ -42,7 +44,8 @@ public class LoanApplicationController {
     @PostMapping(value = "/loan-query")
     public ResponseEntity<SuccessMessage> queryLoanApplication(@Valid @RequestBody LoanApplicationQueryRequestDTO loanApplicationQueryRequestDTO) {
 
-        LoanApplicationResultDTO loanApplicationResultDTO = loanApplicationService.queryLoanApplication(loanApplicationQueryRequestDTO);
+        LoanApplicationResponseDTO loanApplicationResponseDTO
+                = loanApplicationService.queryLoanApplication(loanApplicationQueryRequestDTO);
 
         HttpStatus httpStatus = HttpStatus.CREATED;
 
@@ -50,7 +53,7 @@ public class LoanApplicationController {
         successMessage.setHttpStatus(httpStatus);
         successMessage.setTimeStamp(LocalDateTime.now());
         successMessage.addMessage("Loan application that has most recent update date has been found.");
-        successMessage.addContent(loanApplicationResultDTO);
+        successMessage.addContent(loanApplicationResponseDTO);
 
         return new ResponseEntity<>(successMessage, httpStatus);
     }

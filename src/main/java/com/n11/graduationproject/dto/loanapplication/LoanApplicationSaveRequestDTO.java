@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -28,5 +29,6 @@ public class LoanApplicationSaveRequestDTO {
      * LoanApplication fields
      */
     @Valid
+    @NotNull(message = "Collateral list is not null.")
     private List<CollateralSaveRequestDTO> collateralList;
 }

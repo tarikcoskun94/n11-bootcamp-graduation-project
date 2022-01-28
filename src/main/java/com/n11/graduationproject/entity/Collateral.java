@@ -1,8 +1,7 @@
 package com.n11.graduationproject.entity;
 
 import com.n11.graduationproject.enum_.CollateralType;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,6 +9,9 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "collaterals")
 public class Collateral extends BaseEntity implements Serializable {
