@@ -10,12 +10,14 @@ import com.n11.graduationproject.entity.LoanCustomer;
 import com.n11.graduationproject.exception.customer.CustomerAlreadyExistingException;
 import com.n11.graduationproject.exception.customer.CustomerNotFoundException;
 import com.n11.graduationproject.exception.customer.LoanCustomerAlreadyExistingException;
+import com.n11.graduationproject.exception.customer.LoanCustomerNotFoundException;
 import com.n11.graduationproject.repository.CustomerRepository;
 import com.n11.graduationproject.repository.LoanCustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,13 +36,6 @@ public class CustomerService {
                 .orElseThrow(() -> new CustomerNotFoundException("Customer is not found by ID: " + id));
 
         return CustomerConverter.convertToCustomerResponseDTO(customer);
-    }
-
-    @Transactional
-    public Customer findByIdAsEntity(Long id) {
-
-        return customerRepository.findById(id)
-                .orElseThrow(() -> new CustomerNotFoundException("Customer is not found by ID: " + id));
     }
 
     @Transactional
@@ -68,23 +63,11 @@ public class CustomerService {
 
         LoanCustomer loanCustomer = CustomerConverter.convertToLoanCustomer(customerSaveRequestDTO, savedCustomer);
         if (loanCustomer != null) {
-            this.saveLoanCustomer(loanCustomer);
+            this.persistLoanCustomer(loanCustomer);
         }
         customerRepository.refresh(savedCustomer);
 
         return CustomerConverter.convertToCustomerResponseDTO(savedCustomer);
-    }
-
-    private LoanCustomer saveLoanCustomer(LoanCustomer loanCustomer) {
-
-        String socialSecurityNo = loanCustomer.getSocialSecurityNo();
-        Long customerId = loanCustomer.getCustomer().getId();
-
-        if (loanCustomerRepository.existsBySocialSecurityNoAndIdNot(socialSecurityNo, customerId)) {
-            throw new LoanCustomerAlreadyExistingException("Social security no is already exist: " + socialSecurityNo);
-        }
-
-        return loanCustomerRepository.saveAndFlush(loanCustomer);
     }
 
     @Transactional
@@ -102,7 +85,7 @@ public class CustomerService {
 
         LoanCustomer loanCustomer = CustomerConverter.convertToLoanCustomer(customerUpdateRequestDTO, updatedCustomer, loanCustomerRepository);
         if (loanCustomer != null) {
-            this.saveLoanCustomer(loanCustomer);
+            this.persistLoanCustomer(loanCustomer);
         }
         customerRepository.refresh(updatedCustomer);
 
@@ -117,5 +100,64 @@ public class CustomerService {
         customerRepository.deleteById(id);
 
         return customerResponseDTO;
+    }
+
+
+    /**
+     * Private ones
+     */
+    private LoanCustomer persistLoanCustomer(LoanCustomer loanCustomer) {
+
+        String socialSecurityNo = loanCustomer.getSocialSecurityNo();
+        Long customerId = loanCustomer.getCustomer().getId();
+
+        if (loanCustomerRepository.existsBySocialSecurityNoAndIdNot(socialSecurityNo, customerId)) {
+            throw new LoanCustomerAlreadyExistingException("Social security no is already exist: " + socialSecurityNo);
+        }
+
+        return loanCustomerRepository.saveAndFlush(loanCustomer);
+    }
+
+    /**
+     * Following functions is to serve internal generally.
+     */
+    public Customer findByIdAndTCIdentificationNo(Long id, String TCIdentificationNo) {
+
+        return customerRepository.findByIdAndTCIdentificationNo(id, TCIdentificationNo)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer is not found by ID and TC identification no: "
+                        + id + " | " + TCIdentificationNo));
+    }
+
+    public Customer findByTCIdentificationNoAndBirthDate(String TCIdentificationNo, LocalDate birthDate) {
+
+        return customerRepository.findByTCIdentificationNoAndBirthDate(TCIdentificationNo, birthDate)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer is not found by TC identification no and birth date: "
+                        + TCIdentificationNo + " | " + birthDate));
+    }
+
+    public LoanCustomer getLoanCustomerByIdAndTCKN(Long id, String TCIdentificationNo) {
+
+        Customer customer = this.findByIdAndTCIdentificationNo(id, TCIdentificationNo);
+
+        LoanCustomer loanCustomer = customer.getLoanCustomer();
+        if (loanCustomer == null) {
+            throw new LoanCustomerNotFoundException("Loan customer is not found by ID and TC identification no: "
+                    + id + " | " + TCIdentificationNo);
+        }
+
+        return loanCustomer;
+    }
+
+    public LoanCustomer getLoanCustomerByTCKNAndBirthDate(String TCIdentificationNo, LocalDate birthDate) {
+
+        Customer customer = this.findByTCIdentificationNoAndBirthDate(TCIdentificationNo, birthDate);
+
+        LoanCustomer loanCustomer = customer.getLoanCustomer();
+        if (loanCustomer == null) {
+            throw new LoanCustomerNotFoundException("Loan customer is not found by ID and TC identification no: "
+                    + TCIdentificationNo + " | " + birthDate);
+        }
+
+        return loanCustomer;
     }
 }

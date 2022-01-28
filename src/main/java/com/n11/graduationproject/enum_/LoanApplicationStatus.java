@@ -4,5 +4,6 @@ public enum LoanApplicationStatus {
 
     APPROVED,
     CANCELLED,
-    REJECTED
+    REJECTED,
+    NOT_CALCULATED
 }

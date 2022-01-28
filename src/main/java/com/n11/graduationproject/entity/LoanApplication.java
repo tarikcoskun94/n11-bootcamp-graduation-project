@@ -1,8 +1,7 @@
 package com.n11.graduationproject.entity;
 
 import com.n11.graduationproject.enum_.LoanApplicationStatus;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,6 +10,9 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "loan_application")
 public class LoanApplication extends BaseEntity implements Serializable {
