@@ -3,10 +3,7 @@ package com.n11.graduationproject.service;
 import com.n11.graduationproject.api.FakeCreditScoreAPI;
 import com.n11.graduationproject.converter.LoanApplicationConverter;
 import com.n11.graduationproject.dto.collateral.CollateralSaveRequestDTO;
-import com.n11.graduationproject.dto.loanapplication.LoanApplicationQueryRequestDTO;
-import com.n11.graduationproject.dto.loanapplication.LoanApplicationResponseDTO;
-import com.n11.graduationproject.dto.loanapplication.LoanApplicationResultDTO;
-import com.n11.graduationproject.dto.loanapplication.LoanApplicationSaveRequestDTO;
+import com.n11.graduationproject.dto.loanapplication.*;
 import com.n11.graduationproject.entity.Collateral;
 import com.n11.graduationproject.entity.LoanApplication;
 import com.n11.graduationproject.entity.LoanCustomer;
@@ -79,6 +76,24 @@ public class LoanApplicationService {
         /** END: Persisting the application request. */
 
         return LoanApplicationConverter.convertToLoanApplicationResponseDTO(savedLoanApplication);
+    }
+
+    @Transactional
+    public LoanApplicationResponseDTO cancelLoanApplication (LoanApplicationCancelRequestDTO loanApplicationCancelRequestDTO){
+
+        String tcIdentificationNo = loanApplicationCancelRequestDTO.getTCIdentificationNo();
+        LocalDate birthDate = loanApplicationCancelRequestDTO.getBirthDate();
+
+        LoanCustomer loanCustomer = customerService.getLoanCustomerByTCKNAndBirthDate(tcIdentificationNo, birthDate);
+
+        LoanApplication loanApplication = loanApplicationRepository.findByLoanCustomerIdAndStatus(loanCustomer.getId(), LoanApplicationStatus.APPROVED)
+                .orElseThrow(() -> new LoanApplicationNotFoundException("Approved loan application is not found by ID and TC identification no: "
+                        + tcIdentificationNo + " | " + birthDate));
+
+        loanApplication.setStatus(LoanApplicationStatus.CANCELLED);
+        LoanApplication updatedLoanApplication = loanApplicationRepository.save(loanApplication);
+
+        return LoanApplicationConverter.convertToLoanApplicationResponseDTO(updatedLoanApplication);
     }
 
     @Transactional

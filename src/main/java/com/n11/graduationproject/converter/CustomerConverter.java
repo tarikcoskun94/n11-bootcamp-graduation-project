@@ -5,6 +5,8 @@ import com.n11.graduationproject.entity.Customer;
 import com.n11.graduationproject.entity.LoanCustomer;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class CustomerConverter {
 
@@ -79,6 +81,19 @@ public final class CustomerConverter {
                 .build();
 
         return customerResponseDTO;
+    }
+
+    public static List<CustomerResponseDTO> convertToCustomerResponseDTOList(List<Customer> customerList) {
+
+        List<CustomerResponseDTO> customerResponseDTOList = new ArrayList<>();
+
+        for (Customer customer : customerList) {
+            customerResponseDTOList.add(
+                    convertToCustomerResponseDTO(customer)
+            );
+        }
+
+        return customerResponseDTOList;
     }
 
     public static LoanCustomerResponseDTO convertToLoanCustomerResponseDTO(LoanCustomer loanCustomer) {

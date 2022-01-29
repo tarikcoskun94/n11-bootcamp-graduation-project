@@ -31,15 +31,6 @@ public class CustomerService {
     private final FakeCreditScoreAPI fakeCreditScoreAPI;
 
     @Transactional
-    public CustomerResponseDTO findById(Long id) {
-
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new CustomerNotFoundException("Customer is not found by ID: " + id));
-
-        return CustomerConverter.convertToCustomerResponseDTO(customer);
-    }
-
-    @Transactional
     public CustomerResponseDTO save(CustomerSaveRequestDTO customerSaveRequestDTO) {
 
         /** Checks whether request fields are used by another. */
@@ -100,6 +91,21 @@ public class CustomerService {
         customerRepository.refresh(updatedCustomer);
 
         return CustomerConverter.convertToCustomerResponseDTO(updatedCustomer);
+    }
+
+    public List<CustomerResponseDTO> findAll() {
+
+        List<Customer> customerList = customerRepository.findAll();
+
+        return CustomerConverter.convertToCustomerResponseDTOList(customerList);
+    }
+
+    public CustomerResponseDTO findById(Long id) {
+
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer is not found by ID: " + id));
+
+        return CustomerConverter.convertToCustomerResponseDTO(customer);
     }
 
     @Transactional

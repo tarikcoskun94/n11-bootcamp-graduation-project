@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -50,6 +51,41 @@ public class CustomerController {
         successMessage.addContent(customerResponseDTO);
 
         return new ResponseEntity<>(successMessage, httpStatus);
+    }
+
+    @GetMapping
+    public ResponseEntity<SuccessMessage> findAll() {
+
+        List<CustomerResponseDTO> customerResponseDTOList = customerService.findAll();
+
+        HttpStatus httpStatus = HttpStatus.OK;
+
+        SuccessMessage successMessage = new SuccessMessage();
+        successMessage.setHttpStatus(httpStatus);
+        successMessage.setTimeStamp(LocalDateTime.now());
+        successMessage.addMessage("Customer has been found.");
+        for (CustomerResponseDTO customerResponseDTO : customerResponseDTOList) {
+            successMessage.addContent(customerResponseDTO);
+        }
+
+        return new ResponseEntity<>(successMessage, httpStatus);
+    }
+
+    @GetMapping(value = "/id/{id}")
+    public ResponseEntity<SuccessMessage> findById(@PathVariable Long id) {
+
+        CustomerResponseDTO customerResponseDTO = customerService.findById(id);
+
+        HttpStatus httpStatus = HttpStatus.OK;
+
+        SuccessMessage successMessage = new SuccessMessage();
+        successMessage.setHttpStatus(httpStatus);
+        successMessage.setTimeStamp(LocalDateTime.now());
+        successMessage.addMessage("Customer has been found.");
+        successMessage.addContent(customerResponseDTO);
+
+        return new ResponseEntity<>(successMessage, httpStatus);
+
     }
 
     @DeleteMapping(value = "/id/{id}")
