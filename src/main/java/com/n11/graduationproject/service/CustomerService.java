@@ -5,6 +5,7 @@ import com.n11.graduationproject.converter.CustomerConverter;
 import com.n11.graduationproject.dto.customer.CustomerResponseDTO;
 import com.n11.graduationproject.dto.customer.CustomerSaveRequestDTO;
 import com.n11.graduationproject.dto.customer.CustomerUpdateRequestDTO;
+import com.n11.graduationproject.dto.customer.LoanCustomerSaveUpdateRequestDTO;
 import com.n11.graduationproject.entity.Customer;
 import com.n11.graduationproject.entity.LoanCustomer;
 import com.n11.graduationproject.exception.customer.CustomerAlreadyExistingException;
@@ -61,10 +62,13 @@ public class CustomerService {
         Customer customer = CustomerConverter.convertToCustomer(customerSaveRequestDTO);
         Customer savedCustomer = customerRepository.saveAndFlush(customer);
 
-        LoanCustomer loanCustomer = CustomerConverter.convertToLoanCustomer(customerSaveRequestDTO, savedCustomer);
+        LoanCustomerSaveUpdateRequestDTO loanCustomerSaveUpdateRequestDTO = customerSaveRequestDTO.getLoanCustomer();
+        LoanCustomer loanCustomer = CustomerConverter.convertToLoanCustomer(loanCustomerSaveUpdateRequestDTO, savedCustomer);
+
         if (loanCustomer != null) {
             this.persistLoanCustomer(loanCustomer);
         }
+
         customerRepository.refresh(savedCustomer);
 
         return CustomerConverter.convertToCustomerResponseDTO(savedCustomer);
@@ -83,10 +87,16 @@ public class CustomerService {
         Customer customer = CustomerConverter.convertToCustomer(customerUpdateRequestDTO);
         Customer updatedCustomer = customerRepository.saveAndFlush(customer);
 
-        LoanCustomer loanCustomer = CustomerConverter.convertToLoanCustomer(customerUpdateRequestDTO, updatedCustomer, loanCustomerRepository);
+        LoanCustomerSaveUpdateRequestDTO loanCustomerSaveUpdateRequestDTO = customerUpdateRequestDTO.getLoanCustomer();
+        LoanCustomer loanCustomer = CustomerConverter.convertToLoanCustomer(loanCustomerSaveUpdateRequestDTO, updatedCustomer);
+
         if (loanCustomer != null) {
+            if (loanCustomerRepository.existsById(updatedCustomer.getId())) {
+                loanCustomer.setId(updatedCustomer.getId());
+            }
             this.persistLoanCustomer(loanCustomer);
         }
+
         customerRepository.refresh(updatedCustomer);
 
         return CustomerConverter.convertToCustomerResponseDTO(updatedCustomer);
@@ -119,7 +129,7 @@ public class CustomerService {
     }
 
     /**
-     * Following functions is to serve internal generally.
+     * Following functions is to serve internal others generally.
      */
     public Customer findByIdAndTCIdentificationNo(Long id, String TCIdentificationNo) {
 

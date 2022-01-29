@@ -37,10 +37,6 @@ public final class CollateralConverter {
     public static Collateral convertToCollateral(CollateralSaveRequestDTO collateralSaveRequestDTO,
                                                  LoanApplication savedLoanApplication) {
 
-        //TODO: YORUMDA YERLERİ UNUTMA, SİL
-//        LoanApplication loanApplication = new LoanApplication();
-//        loanApplication.setId(savedLoanApplication);
-
         Collateral collateral = Collateral.builder()
                 .price(collateralSaveRequestDTO.getPrice())
                 .type(collateralSaveRequestDTO.getType())

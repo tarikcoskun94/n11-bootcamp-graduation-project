@@ -18,6 +18,6 @@ public class CollateralSaveRequestDTO {
     @DecimalMin(value = "1.00")
     private BigDecimal price;
 
-    //TODO: Enum validasyonuna bakılabilir?
+    @NotNull(message = "Collateral type cannot be null.")
     private CollateralType type;
 }
