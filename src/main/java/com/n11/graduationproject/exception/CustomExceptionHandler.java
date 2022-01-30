@@ -10,6 +10,7 @@ import com.n11.graduationproject.exception.customer.LoanCustomerNotFoundExceptio
 import com.n11.graduationproject.exception.loanapplication.LoanApplicationAlreadyExistingException;
 import com.n11.graduationproject.exception.loanapplication.LoanApplicationNotCalculatedException;
 import com.n11.graduationproject.exception.loanapplication.LoanApplicationNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @RestControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -38,6 +40,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         exceptionDTO.setExceptionPath(customerNotFoundException.toString());
         errorMessage.addContent(exceptionDTO);
 
+        log.error(errorMessage.toString());
+
         return new ResponseEntity<>(errorMessage, httpStatus);
     }
 
@@ -54,6 +58,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ExceptionDTO exceptionDTO = new ExceptionDTO();
         exceptionDTO.setExceptionPath(creditScoreNotFoundException.toString());
         errorMessage.addContent(exceptionDTO);
+
+        log.error(errorMessage.toString());
 
         return new ResponseEntity<>(errorMessage, httpStatus);
     }
@@ -72,6 +78,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         exceptionDTO.setExceptionPath(loanCustomerNotFoundException.toString());
         errorMessage.addContent(exceptionDTO);
 
+        log.error(errorMessage.toString());
+
         return new ResponseEntity<>(errorMessage, httpStatus);
     }
 
@@ -88,6 +96,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ExceptionDTO exceptionDTO = new ExceptionDTO();
         exceptionDTO.setExceptionPath(loanApplicationNotFoundException.toString());
         errorMessage.addContent(exceptionDTO);
+
+        log.error(errorMessage.toString());
 
         return new ResponseEntity<>(errorMessage, httpStatus);
     }
@@ -110,6 +120,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         exceptionDTO.setExceptionPath(customerAlreadyExistingException.toString());
         errorMessage.addContent(exceptionDTO);
 
+        log.error(errorMessage.toString());
+
         return new ResponseEntity<>(errorMessage, httpStatus);
     }
 
@@ -127,6 +139,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         exceptionDTO.setExceptionPath(loanCustomerAlreadyExistingException.toString());
         errorMessage.addContent(exceptionDTO);
 
+        log.error(errorMessage.toString());
+
         return new ResponseEntity<>(errorMessage, httpStatus);
     }
 
@@ -143,6 +157,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ExceptionDTO exceptionDTO = new ExceptionDTO();
         exceptionDTO.setExceptionPath(loanApplicationAlreadyExistingException.toString());
         errorMessage.addContent(exceptionDTO);
+
+        log.error(errorMessage.toString());
 
         return new ResponseEntity<>(errorMessage, httpStatus);
     }
@@ -164,6 +180,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ExceptionDTO exceptionDTO = new ExceptionDTO();
         exceptionDTO.setExceptionPath(loanApplicationNotCalculatedException.toString());
         errorMessage.addContent(exceptionDTO);
+
+        log.error(errorMessage.toString());
 
         return new ResponseEntity<>(errorMessage, httpStatus);
     }

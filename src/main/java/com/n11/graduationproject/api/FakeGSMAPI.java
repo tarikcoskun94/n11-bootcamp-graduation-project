@@ -1,9 +1,11 @@
 package com.n11.graduationproject.api;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Component
 public class FakeGSMAPI {
 
@@ -12,6 +14,6 @@ public class FakeGSMAPI {
         String timeMessage = "--> Your message has been send [" + LocalDateTime.now().toString() + "].";
         String fullMessage = "\n" + message + "\n" + signature;
 
-        System.out.println("\n" + timeMessage + fullMessage + "\n");
+        log.info(timeMessage + fullMessage);
     }
 }

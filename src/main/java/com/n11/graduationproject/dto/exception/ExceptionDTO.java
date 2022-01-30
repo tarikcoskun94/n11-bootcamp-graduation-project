@@ -5,6 +5,7 @@ import lombok.*;
 
 @Getter
 @Setter
+@ToString
 public class ExceptionDTO implements Responsable {
 
     private String exceptionPath;

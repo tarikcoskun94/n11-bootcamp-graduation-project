@@ -2,12 +2,14 @@ package com.n11.graduationproject.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.n11.graduationproject.enum_.ReponseMessageType;
+import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@ToString
 public abstract class BaseMessage {
 
     private ReponseMessageType type;

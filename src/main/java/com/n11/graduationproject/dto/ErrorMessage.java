@@ -8,4 +8,5 @@ public class ErrorMessage extends BaseMessage {
 
         setType(ReponseMessageType.ERROR);
     }
+
 }
