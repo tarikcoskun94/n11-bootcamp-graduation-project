@@ -31,8 +31,8 @@ public class CustomerUpdateRequestDTO {
     @NotBlank(message = "Last name is mandatory.")
     private String lastName;
 
-    @NotNull(message = "Birth date is mandatory.")//TODO: Tarihlerde nasıl NotBlank kontrolü yapılabilir? Best practice?
-    @JsonFormat(pattern = "dd-MM-yyyy") //TODO: Burada hata mesajı yönetimi yapılabilir mi?
+    @NotNull(message = "Birth date is mandatory.")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate birthDate;
 
     @Size(min = 10, max = 10, message = "Phone number must be exact 10 character.")

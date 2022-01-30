@@ -19,7 +19,7 @@ public class LoanApplicationCancelRequestDTO {
     @Pattern(regexp = "^\\d+$", message = "TC identification no must include only numbers.")
     private String TCIdentificationNo;
 
-    @NotNull(message = "Birth date is mandatory.")//TODO: Tarihlerde nasıl NotBlank kontrolü yapılabilir? Best practice?
-    @JsonFormat(pattern = "dd-MM-yyyy") //TODO: Burada hata mesajı yönetimi yapılabilir mi?
+    @NotNull(message = "Birth date is mandatory.")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate birthDate;
 }
