@@ -1,6 +1,7 @@
 package com.n11.graduationproject.service;
 
 import com.n11.graduationproject.api.FakeCreditScoreAPI;
+import com.n11.graduationproject.api.FakeGSMAPI;
 import com.n11.graduationproject.converter.LoanApplicationConverter;
 import com.n11.graduationproject.dto.collateral.CollateralSaveRequestDTO;
 import com.n11.graduationproject.dto.loanapplication.*;
@@ -33,6 +34,7 @@ public class LoanApplicationService {
     private final CustomerService customerService;
     private final CollateralService collateralService;
     private final FakeCreditScoreAPI fakeCreditScoreAPI;
+    private final FakeGSMAPI fakeGSMAPI;
 
     @Transactional
     public LoanApplicationResponseDTO save(LoanApplicationSaveRequestDTO loanApplicationSaveRequestDTO) {
@@ -75,11 +77,18 @@ public class LoanApplicationService {
         savedLoanApplication.setCollateralList(savedCollateralList);
         /** END: Persisting the application request. */
 
+        String phoneNumber = loanCustomer.getCustomer().getPhoneNumber();
+        String smsMessage = "Dear customer, your loan application has been saved." + "\n" +
+                "Status: " + savedLoanApplication.getStatus() + "\n" +
+                "Limit: " + savedLoanApplication.getLimit();
+        String signature = "Tarık Bank - 0555 555 55 55";
+        fakeGSMAPI.sendSMS(phoneNumber, smsMessage, signature);
+
         return LoanApplicationConverter.convertToLoanApplicationResponseDTO(savedLoanApplication);
     }
 
     @Transactional
-    public LoanApplicationResponseDTO cancelLoanApplication (LoanApplicationCancelRequestDTO loanApplicationCancelRequestDTO){
+    public LoanApplicationResponseDTO cancelLoanApplication(LoanApplicationCancelRequestDTO loanApplicationCancelRequestDTO) {
 
         String tcIdentificationNo = loanApplicationCancelRequestDTO.getTCIdentificationNo();
         LocalDate birthDate = loanApplicationCancelRequestDTO.getBirthDate();
@@ -115,7 +124,7 @@ public class LoanApplicationService {
     /**
      * Private ones
      */
-    private Long getCreditScore(String TCIdentificationNo) {
+    protected Long getCreditScore(String TCIdentificationNo) {
 
         return fakeCreditScoreAPI.getCreditScoreByTCKN(TCIdentificationNo)
                 .orElseThrow(() -> new CreditScoreNotFoundException("Credit score is not found by TC identification no: " + TCIdentificationNo));

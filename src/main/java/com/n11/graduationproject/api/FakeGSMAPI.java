@@ -1,23 +1,17 @@
 package com.n11.graduationproject.api;
 
-import com.n11.graduationproject.util.NumberUtil;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 @Component
 public class FakeGSMAPI {
 
-    public Optional<String> verifyPhoneNumber(String phoneNumber) {
+    public void sendSMS(String phoneNumber, String message, String signature) {
 
-        long verificationRate = NumberUtil.generateRandomNumberBetween(1, 100);
+        String timeMessage = "--> Your message has been send [" + LocalDateTime.now().toString() + "].";
+        String fullMessage = "\n" + message + "\n" + signature;
 
-        if (verificationRate > 5) {
-            return Optional.of("OK");
-        } else if (verificationRate <= 5) {
-            return Optional.of("NOTOK");
-        } else {
-            return Optional.empty();
-        }
+        System.out.println("\n" + timeMessage + fullMessage + "\n");
     }
 }
