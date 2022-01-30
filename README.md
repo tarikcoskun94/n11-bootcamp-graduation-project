@@ -28,6 +28,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 ### Built With
+* [Docker](https://www.docker.com/)
 * [Java 11](https://www.oracle.com/tr/java/technologies/javase/jdk11-archive-downloads.html)
 * [IntelliJ Idea](https://www.jetbrains.com/idea)
 * [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
@@ -58,15 +59,33 @@ Before you run and use this project, please read the readme file, main story and
 2. Install JDK-11 and switch to it.
 3. Import the project to your IDE.
 4. Change the project structure (File > Project Structure).
-  ![intellij-project-structure](https://user-images.githubusercontent.com/10232721/151702557-7e2be504-2aa0-4cea-907d-69ceef636a27.png)
-  ![intellij-project-structure-2](https://user-images.githubusercontent.com/10232721/151702559-78d5fcb0-80ff-4ef7-bd53-ef1105857b90.png)
+   ![intellij-project-structure](https://user-images.githubusercontent.com/10232721/151702557-7e2be504-2aa0-4cea-907d-69ceef636a27.png)
+   ![intellij-project-structure-2](https://user-images.githubusercontent.com/10232721/151702559-78d5fcb0-80ff-4ef7-bd53-ef1105857b90.png)
 5. Create a new database by using PgAdmin on PostgreSQL.
-6. Go to project file structure and find the application.properties file under resources.
-7. You must the edit database name, username and password on application.properties file.
- ![application-prop](https://user-images.githubusercontent.com/10232721/151702685-7dc517ec-d947-4e8a-a7a5-86b4aac8481d.png)
-8. Run the project
-9. Open the swagger ui on your browser. Default link -> http://localhost:8080/swagger-ui.html
-10. Send request to endpoints (The project is running on the 8080 port by defalt).
+6. Get your ip address.
+   ![ipconfig](https://user-images.githubusercontent.com/10232721/151714515-78630bb0-b531-4199-b3ec-51eda49132c8.png)
+7. Go to project file structure and find the application.properties file under resources.
+8. You must edit local address section on application.properties file.
+   ![ip-app-prop](https://user-images.githubusercontent.com/10232721/151714557-e0eee9da-ab32-44e8-a6f5-a4358084a788.png)
+9. You must edit database name, username and password sections on application.properties file.
+   ![postgre-conf](https://user-images.githubusercontent.com/10232721/151714619-fad00c7d-be24-4eab-84d2-94f5d903b561.png)
+10. Go to 'C:\Program Files\PostgreSQL\14\data' and add following line to end of the 'pg_hba.conf' file.
+    ![postgre-path](https://user-images.githubusercontent.com/10232721/151714910-0d9f2a7f-5246-47b8-a8ea-bd5223e1b5e8.png)
+    ```sh
+    host    all             all             0.0.0.0/0            	md5
+    ```
+11. Run the clean and install to create target files.
+12. Run the following docker commands:
+    ![docker-commands](https://user-images.githubusercontent.com/10232721/151715048-085c0bbb-5377-4c2a-96fb-76fd2da77b1d.png)
+    ```sh
+    docker build --tag n11-graduation-project .
+    ```
+    ```sh
+    docker run -p 8080:8080 n11-graduation-project
+    ```
+13. If you want, you can run the project on IDE too by applying required configurations. 
+14. Open the swagger ui on your browser. Default link -> http://localhost:8080/swagger-ui.html
+15. Send request to endpoints (The project is running on the 8080 port by defalt).
 
 ### Screenshots
 ##### WARNING! All of dates format for request must be as "dd-mm-yyyy".
